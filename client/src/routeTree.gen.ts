@@ -13,34 +13,32 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
-import { Route as ChatsLayoutImport } from './routes/chats/_layout'
 import { Route as AuthLayoutImport } from './routes/auth/_layout'
-import { Route as ChatsLayoutNewImport } from './routes/chats/_layout.new'
-import { Route as ChatsLayoutChatIdImport } from './routes/chats/_layout.$chatId'
 import { Route as AuthLayoutVerifyAccountImport } from './routes/auth/_layout.verify-account'
 import { Route as AuthLayoutRegisterImport } from './routes/auth/_layout.register'
 import { Route as AuthLayoutLoginImport } from './routes/auth/_layout.login'
 import { Route as AuthLayoutForgotPasswordImport } from './routes/auth/_layout.forgot-password'
 import { Route as AuthLayoutAccountValidatedImport } from './routes/auth/_layout.account-validated'
 import { Route as AuthLayoutAccountCreatedImport } from './routes/auth/_layout.account-created'
+import { Route as AuthenticatedRecipesNewImport } from './routes/_authenticated/recipes/new'
+import { Route as AuthenticatedRecipesRecipeIdImport } from './routes/_authenticated/recipes/$recipeId'
 
 // Create Virtual Routes
 
-const ChatsImport = createFileRoute('/chats')()
 const AuthImport = createFileRoute('/auth')()
 
 // Create/Update Routes
 
-const ChatsRoute = ChatsImport.update({
-  id: '/chats',
-  path: '/chats',
-  getParentRoute: () => rootRoute,
-} as any)
-
 const AuthRoute = AuthImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AuthenticatedRoute = AuthenticatedImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -50,26 +48,9 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const ChatsLayoutRoute = ChatsLayoutImport.update({
-  id: '/_layout',
-  getParentRoute: () => ChatsRoute,
-} as any)
-
 const AuthLayoutRoute = AuthLayoutImport.update({
   id: '/_layout',
   getParentRoute: () => AuthRoute,
-} as any)
-
-const ChatsLayoutNewRoute = ChatsLayoutNewImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => ChatsLayoutRoute,
-} as any)
-
-const ChatsLayoutChatIdRoute = ChatsLayoutChatIdImport.update({
-  id: '/$chatId',
-  path: '/$chatId',
-  getParentRoute: () => ChatsLayoutRoute,
 } as any)
 
 const AuthLayoutVerifyAccountRoute = AuthLayoutVerifyAccountImport.update({
@@ -110,6 +91,19 @@ const AuthLayoutAccountCreatedRoute = AuthLayoutAccountCreatedImport.update({
   getParentRoute: () => AuthLayoutRoute,
 } as any)
 
+const AuthenticatedRecipesNewRoute = AuthenticatedRecipesNewImport.update({
+  id: '/recipes/new',
+  path: '/recipes/new',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedRecipesRecipeIdRoute =
+  AuthenticatedRecipesRecipeIdImport.update({
+    id: '/recipes/$recipeId',
+    path: '/recipes/$recipeId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -119,6 +113,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
     '/auth': {
@@ -135,19 +136,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLayoutImport
       parentRoute: typeof AuthRoute
     }
-    '/chats': {
-      id: '/chats'
-      path: '/chats'
-      fullPath: '/chats'
-      preLoaderRoute: typeof ChatsImport
-      parentRoute: typeof rootRoute
+    '/_authenticated/recipes/$recipeId': {
+      id: '/_authenticated/recipes/$recipeId'
+      path: '/recipes/$recipeId'
+      fullPath: '/recipes/$recipeId'
+      preLoaderRoute: typeof AuthenticatedRecipesRecipeIdImport
+      parentRoute: typeof AuthenticatedImport
     }
-    '/chats/_layout': {
-      id: '/chats/_layout'
-      path: '/chats'
-      fullPath: '/chats'
-      preLoaderRoute: typeof ChatsLayoutImport
-      parentRoute: typeof ChatsRoute
+    '/_authenticated/recipes/new': {
+      id: '/_authenticated/recipes/new'
+      path: '/recipes/new'
+      fullPath: '/recipes/new'
+      preLoaderRoute: typeof AuthenticatedRecipesNewImport
+      parentRoute: typeof AuthenticatedImport
     }
     '/auth/_layout/account-created': {
       id: '/auth/_layout/account-created'
@@ -191,24 +192,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLayoutVerifyAccountImport
       parentRoute: typeof AuthLayoutImport
     }
-    '/chats/_layout/$chatId': {
-      id: '/chats/_layout/$chatId'
-      path: '/$chatId'
-      fullPath: '/chats/$chatId'
-      preLoaderRoute: typeof ChatsLayoutChatIdImport
-      parentRoute: typeof ChatsLayoutImport
-    }
-    '/chats/_layout/new': {
-      id: '/chats/_layout/new'
-      path: '/new'
-      fullPath: '/chats/new'
-      preLoaderRoute: typeof ChatsLayoutNewImport
-      parentRoute: typeof ChatsLayoutImport
-    }
   }
 }
 
 // Create and export the route tree
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedRecipesRecipeIdRoute: typeof AuthenticatedRecipesRecipeIdRoute
+  AuthenticatedRecipesNewRoute: typeof AuthenticatedRecipesNewRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedRecipesRecipeIdRoute: AuthenticatedRecipesRecipeIdRoute,
+  AuthenticatedRecipesNewRoute: AuthenticatedRecipesNewRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
 
 interface AuthLayoutRouteChildren {
   AuthLayoutAccountCreatedRoute: typeof AuthLayoutAccountCreatedRoute
@@ -242,130 +243,104 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
-interface ChatsLayoutRouteChildren {
-  ChatsLayoutChatIdRoute: typeof ChatsLayoutChatIdRoute
-  ChatsLayoutNewRoute: typeof ChatsLayoutNewRoute
-}
-
-const ChatsLayoutRouteChildren: ChatsLayoutRouteChildren = {
-  ChatsLayoutChatIdRoute: ChatsLayoutChatIdRoute,
-  ChatsLayoutNewRoute: ChatsLayoutNewRoute,
-}
-
-const ChatsLayoutRouteWithChildren = ChatsLayoutRoute._addFileChildren(
-  ChatsLayoutRouteChildren,
-)
-
-interface ChatsRouteChildren {
-  ChatsLayoutRoute: typeof ChatsLayoutRouteWithChildren
-}
-
-const ChatsRouteChildren: ChatsRouteChildren = {
-  ChatsLayoutRoute: ChatsLayoutRouteWithChildren,
-}
-
-const ChatsRouteWithChildren = ChatsRoute._addFileChildren(ChatsRouteChildren)
-
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthLayoutRouteWithChildren
-  '/chats': typeof ChatsLayoutRouteWithChildren
+  '/recipes/$recipeId': typeof AuthenticatedRecipesRecipeIdRoute
+  '/recipes/new': typeof AuthenticatedRecipesNewRoute
   '/auth/account-created': typeof AuthLayoutAccountCreatedRoute
   '/auth/account-validated': typeof AuthLayoutAccountValidatedRoute
   '/auth/forgot-password': typeof AuthLayoutForgotPasswordRoute
   '/auth/login': typeof AuthLayoutLoginRoute
   '/auth/register': typeof AuthLayoutRegisterRoute
   '/auth/verify-account': typeof AuthLayoutVerifyAccountRoute
-  '/chats/$chatId': typeof ChatsLayoutChatIdRoute
-  '/chats/new': typeof ChatsLayoutNewRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthLayoutRouteWithChildren
-  '/chats': typeof ChatsLayoutRouteWithChildren
+  '/recipes/$recipeId': typeof AuthenticatedRecipesRecipeIdRoute
+  '/recipes/new': typeof AuthenticatedRecipesNewRoute
   '/auth/account-created': typeof AuthLayoutAccountCreatedRoute
   '/auth/account-validated': typeof AuthLayoutAccountValidatedRoute
   '/auth/forgot-password': typeof AuthLayoutForgotPasswordRoute
   '/auth/login': typeof AuthLayoutLoginRoute
   '/auth/register': typeof AuthLayoutRegisterRoute
   '/auth/verify-account': typeof AuthLayoutVerifyAccountRoute
-  '/chats/$chatId': typeof ChatsLayoutChatIdRoute
-  '/chats/new': typeof ChatsLayoutNewRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/auth/_layout': typeof AuthLayoutRouteWithChildren
-  '/chats': typeof ChatsRouteWithChildren
-  '/chats/_layout': typeof ChatsLayoutRouteWithChildren
+  '/_authenticated/recipes/$recipeId': typeof AuthenticatedRecipesRecipeIdRoute
+  '/_authenticated/recipes/new': typeof AuthenticatedRecipesNewRoute
   '/auth/_layout/account-created': typeof AuthLayoutAccountCreatedRoute
   '/auth/_layout/account-validated': typeof AuthLayoutAccountValidatedRoute
   '/auth/_layout/forgot-password': typeof AuthLayoutForgotPasswordRoute
   '/auth/_layout/login': typeof AuthLayoutLoginRoute
   '/auth/_layout/register': typeof AuthLayoutRegisterRoute
   '/auth/_layout/verify-account': typeof AuthLayoutVerifyAccountRoute
-  '/chats/_layout/$chatId': typeof ChatsLayoutChatIdRoute
-  '/chats/_layout/new': typeof ChatsLayoutNewRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | ''
     | '/auth'
-    | '/chats'
+    | '/recipes/$recipeId'
+    | '/recipes/new'
     | '/auth/account-created'
     | '/auth/account-validated'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
     | '/auth/verify-account'
-    | '/chats/$chatId'
-    | '/chats/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | ''
     | '/auth'
-    | '/chats'
+    | '/recipes/$recipeId'
+    | '/recipes/new'
     | '/auth/account-created'
     | '/auth/account-validated'
     | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
     | '/auth/verify-account'
-    | '/chats/$chatId'
-    | '/chats/new'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/auth'
     | '/auth/_layout'
-    | '/chats'
-    | '/chats/_layout'
+    | '/_authenticated/recipes/$recipeId'
+    | '/_authenticated/recipes/new'
     | '/auth/_layout/account-created'
     | '/auth/_layout/account-validated'
     | '/auth/_layout/forgot-password'
     | '/auth/_layout/login'
     | '/auth/_layout/register'
     | '/auth/_layout/verify-account'
-    | '/chats/_layout/$chatId'
-    | '/chats/_layout/new'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
-  ChatsRoute: typeof ChatsRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
-  ChatsRoute: ChatsRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -379,12 +354,19 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/auth",
-        "/chats"
+        "/_authenticated",
+        "/auth"
       ]
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/_authenticated": {
+      "filePath": "_authenticated.tsx",
+      "children": [
+        "/_authenticated/recipes/$recipeId",
+        "/_authenticated/recipes/new"
+      ]
     },
     "/auth": {
       "filePath": "auth",
@@ -404,19 +386,13 @@ export const routeTree = rootRoute
         "/auth/_layout/verify-account"
       ]
     },
-    "/chats": {
-      "filePath": "chats",
-      "children": [
-        "/chats/_layout"
-      ]
+    "/_authenticated/recipes/$recipeId": {
+      "filePath": "_authenticated/recipes/$recipeId.tsx",
+      "parent": "/_authenticated"
     },
-    "/chats/_layout": {
-      "filePath": "chats/_layout.tsx",
-      "parent": "/chats",
-      "children": [
-        "/chats/_layout/$chatId",
-        "/chats/_layout/new"
-      ]
+    "/_authenticated/recipes/new": {
+      "filePath": "_authenticated/recipes/new.tsx",
+      "parent": "/_authenticated"
     },
     "/auth/_layout/account-created": {
       "filePath": "auth/_layout.account-created.tsx",
@@ -441,14 +417,6 @@ export const routeTree = rootRoute
     "/auth/_layout/verify-account": {
       "filePath": "auth/_layout.verify-account.tsx",
       "parent": "/auth/_layout"
-    },
-    "/chats/_layout/$chatId": {
-      "filePath": "chats/_layout.$chatId.tsx",
-      "parent": "/chats/_layout"
-    },
-    "/chats/_layout/new": {
-      "filePath": "chats/_layout.new.tsx",
-      "parent": "/chats/_layout"
     }
   }
 }

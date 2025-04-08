@@ -3,7 +3,12 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { type VariantProps, cva } from "class-variance-authority";
-import { PanelLeftIcon } from "lucide-react";
+import {
+  ArrowLeftToLineIcon,
+  ArrowRightToLineIcon,
+  PanelLeftCloseIcon,
+  PanelLeftIcon,
+} from "lucide-react";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
@@ -258,7 +263,10 @@ function SidebarTrigger({
   onClick,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar, open } = useSidebar();
+
+  const PanelIcon = open ? PanelLeftCloseIcon : PanelLeftIcon;
+  const HoverIcon = open ? ArrowLeftToLineIcon : ArrowRightToLineIcon;
 
   return (
     <Button
@@ -266,15 +274,20 @@ function SidebarTrigger({
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon"
-      className={cn("size-7", className)}
+      className={cn(
+        `size-7 hover:bg-sidebar-accent-foreground/15 group/trigger ease-in-out duration-500 transition`,
+        className
+      )}
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
       }}
       {...props}
     >
-      <PanelLeftIcon />
-      <span className="sr-only">Toggle Sidebar</span>
+      <PanelIcon className="group-hover/trigger:hidden" />
+      <HoverIcon className="hidden group-hover/trigger:inline" />
+
+      <span className="sr-only">Ouvrir le menu de navigation</span>
     </Button>
   );
 }

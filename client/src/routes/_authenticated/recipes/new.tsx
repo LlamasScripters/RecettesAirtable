@@ -8,11 +8,11 @@ type RecipeSuggestion = {
   imageUrl: string;
 };
 
-export const Route = createFileRoute("/chats/_layout/new")({
-  component: NewChatPage,
+export const Route = createFileRoute("/_authenticated/recipes/new")({
+  component: NewRecipePage,
 });
 
-function NewChatPage() {
+function NewRecipePage() {
   const navigate = useNavigate();
 
   // Simuler des suggestions de recettes
@@ -48,14 +48,13 @@ function NewChatPage() {
   ];
 
   const handleRecipeSelect = (recipeId: string) => {
-    // Dans une application réelle, on créerait une nouvelle conversation ici
-    navigate({ to: "/chats/$chatId", params: { chatId: "4" } });
+    navigate({ to: "/recipes/$recipeId", params: { recipeId: "4" } });
   };
 
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleCreateCustomRecipe = () => {
-    navigate({ to: "/chats/$chatId", params: { chatId: "4" } });
+    navigate({ to: "/recipes/$recipeId", params: { recipeId: "4" } });
   };
 
   return (

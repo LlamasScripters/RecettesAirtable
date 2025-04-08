@@ -44,12 +44,10 @@ type RecipeDetail = {
   allergies: string[];
 };
 
-// const chatParamsSchema = z.object({
-//   chatId: z.string().uuid(),
-// });
-
-export const Route = createFileRoute("/chats/_layout/$chatId")({
-  component: ChatDetailPage,
+export const Route = createFileRoute(
+  "/_authenticated/recipes/$recipeId"
+)({
+  component: RecipeDetailPage,
   notFoundComponent: () => (
     <div className="flex flex-col h-full">
       <div className="text-center">
@@ -59,7 +57,7 @@ export const Route = createFileRoute("/chats/_layout/$chatId")({
           suffisants pour y accéder.
         </p>
         <Link
-          to="/chats"
+          to="/recipes"
           className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 transition"
         >
           Retour à la liste des conversations
@@ -69,8 +67,8 @@ export const Route = createFileRoute("/chats/_layout/$chatId")({
   ),
 });
 
-function ChatDetailPage() {
-  const { chatId } = Route.useParams();
+function RecipeDetailPage() {
+  const { recipeId } = Route.useParams();
   const navigate = useNavigate();
 
   // Simuler une conversation
@@ -106,7 +104,7 @@ function ChatDetailPage() {
 
   // Simuler les détails de la recette
   const recipe: RecipeDetail = {
-    id: chatId,
+    id: recipeId,
     title: "Risotto aux champignons sans lactose",
     ingredients: [
       "200g de riz arborio",
