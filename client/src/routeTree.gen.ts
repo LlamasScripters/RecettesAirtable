@@ -13,9 +13,14 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as RecipesOldImport } from './routes/recipes-old'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as IndexImport } from './routes/index'
+import { Route as RecipesOldNewImport } from './routes/recipes-old/new'
+import { Route as RecipesOldRecipeIdImport } from './routes/recipes-old/$recipeId'
 import { Route as AuthLayoutImport } from './routes/auth/_layout'
+import { Route as AuthenticatedRecipesImport } from './routes/_authenticated/recipes'
+import { Route as AuthenticatedRecipesIndexImport } from './routes/_authenticated/recipes/index'
 import { Route as AuthLayoutVerifyAccountImport } from './routes/auth/_layout.verify-account'
 import { Route as AuthLayoutRegisterImport } from './routes/auth/_layout.register'
 import { Route as AuthLayoutLoginImport } from './routes/auth/_layout.login'
@@ -37,6 +42,12 @@ const AuthRoute = AuthImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const RecipesOldRoute = RecipesOldImport.update({
+  id: '/recipes-old',
+  path: '/recipes-old',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AuthenticatedRoute = AuthenticatedImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRoute,
@@ -48,9 +59,33 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
+const RecipesOldNewRoute = RecipesOldNewImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => RecipesOldRoute,
+} as any)
+
+const RecipesOldRecipeIdRoute = RecipesOldRecipeIdImport.update({
+  id: '/$recipeId',
+  path: '/$recipeId',
+  getParentRoute: () => RecipesOldRoute,
+} as any)
+
 const AuthLayoutRoute = AuthLayoutImport.update({
   id: '/_layout',
   getParentRoute: () => AuthRoute,
+} as any)
+
+const AuthenticatedRecipesRoute = AuthenticatedRecipesImport.update({
+  id: '/recipes',
+  path: '/recipes',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedRecipesIndexRoute = AuthenticatedRecipesIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedRecipesRoute,
 } as any)
 
 const AuthLayoutVerifyAccountRoute = AuthLayoutVerifyAccountImport.update({
@@ -92,16 +127,16 @@ const AuthLayoutAccountCreatedRoute = AuthLayoutAccountCreatedImport.update({
 } as any)
 
 const AuthenticatedRecipesNewRoute = AuthenticatedRecipesNewImport.update({
-  id: '/recipes/new',
-  path: '/recipes/new',
-  getParentRoute: () => AuthenticatedRoute,
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthenticatedRecipesRoute,
 } as any)
 
 const AuthenticatedRecipesRecipeIdRoute =
   AuthenticatedRecipesRecipeIdImport.update({
-    id: '/recipes/$recipeId',
-    path: '/recipes/$recipeId',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/$recipeId',
+    path: '/$recipeId',
+    getParentRoute: () => AuthenticatedRecipesRoute,
   } as any)
 
 // Populate the FileRoutesByPath interface
@@ -122,6 +157,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
+    '/recipes-old': {
+      id: '/recipes-old'
+      path: '/recipes-old'
+      fullPath: '/recipes-old'
+      preLoaderRoute: typeof RecipesOldImport
+      parentRoute: typeof rootRoute
+    }
+    '/_authenticated/recipes': {
+      id: '/_authenticated/recipes'
+      path: '/recipes'
+      fullPath: '/recipes'
+      preLoaderRoute: typeof AuthenticatedRecipesImport
+      parentRoute: typeof AuthenticatedImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -136,19 +185,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLayoutImport
       parentRoute: typeof AuthRoute
     }
+    '/recipes-old/$recipeId': {
+      id: '/recipes-old/$recipeId'
+      path: '/$recipeId'
+      fullPath: '/recipes-old/$recipeId'
+      preLoaderRoute: typeof RecipesOldRecipeIdImport
+      parentRoute: typeof RecipesOldImport
+    }
+    '/recipes-old/new': {
+      id: '/recipes-old/new'
+      path: '/new'
+      fullPath: '/recipes-old/new'
+      preLoaderRoute: typeof RecipesOldNewImport
+      parentRoute: typeof RecipesOldImport
+    }
     '/_authenticated/recipes/$recipeId': {
       id: '/_authenticated/recipes/$recipeId'
-      path: '/recipes/$recipeId'
+      path: '/$recipeId'
       fullPath: '/recipes/$recipeId'
       preLoaderRoute: typeof AuthenticatedRecipesRecipeIdImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedRecipesImport
     }
     '/_authenticated/recipes/new': {
       id: '/_authenticated/recipes/new'
-      path: '/recipes/new'
+      path: '/new'
       fullPath: '/recipes/new'
       preLoaderRoute: typeof AuthenticatedRecipesNewImport
-      parentRoute: typeof AuthenticatedImport
+      parentRoute: typeof AuthenticatedRecipesImport
     }
     '/auth/_layout/account-created': {
       id: '/auth/_layout/account-created'
@@ -192,23 +255,57 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthLayoutVerifyAccountImport
       parentRoute: typeof AuthLayoutImport
     }
+    '/_authenticated/recipes/': {
+      id: '/_authenticated/recipes/'
+      path: '/'
+      fullPath: '/recipes/'
+      preLoaderRoute: typeof AuthenticatedRecipesIndexImport
+      parentRoute: typeof AuthenticatedRecipesImport
+    }
   }
 }
 
 // Create and export the route tree
 
-interface AuthenticatedRouteChildren {
+interface AuthenticatedRecipesRouteChildren {
   AuthenticatedRecipesRecipeIdRoute: typeof AuthenticatedRecipesRecipeIdRoute
   AuthenticatedRecipesNewRoute: typeof AuthenticatedRecipesNewRoute
+  AuthenticatedRecipesIndexRoute: typeof AuthenticatedRecipesIndexRoute
+}
+
+const AuthenticatedRecipesRouteChildren: AuthenticatedRecipesRouteChildren = {
+  AuthenticatedRecipesRecipeIdRoute: AuthenticatedRecipesRecipeIdRoute,
+  AuthenticatedRecipesNewRoute: AuthenticatedRecipesNewRoute,
+  AuthenticatedRecipesIndexRoute: AuthenticatedRecipesIndexRoute,
+}
+
+const AuthenticatedRecipesRouteWithChildren =
+  AuthenticatedRecipesRoute._addFileChildren(AuthenticatedRecipesRouteChildren)
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedRecipesRoute: typeof AuthenticatedRecipesRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedRecipesRecipeIdRoute: AuthenticatedRecipesRecipeIdRoute,
-  AuthenticatedRecipesNewRoute: AuthenticatedRecipesNewRoute,
+  AuthenticatedRecipesRoute: AuthenticatedRecipesRouteWithChildren,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
+)
+
+interface RecipesOldRouteChildren {
+  RecipesOldRecipeIdRoute: typeof RecipesOldRecipeIdRoute
+  RecipesOldNewRoute: typeof RecipesOldNewRoute
+}
+
+const RecipesOldRouteChildren: RecipesOldRouteChildren = {
+  RecipesOldRecipeIdRoute: RecipesOldRecipeIdRoute,
+  RecipesOldNewRoute: RecipesOldNewRoute,
+}
+
+const RecipesOldRouteWithChildren = RecipesOldRoute._addFileChildren(
+  RecipesOldRouteChildren,
 )
 
 interface AuthLayoutRouteChildren {
@@ -246,7 +343,11 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof AuthenticatedRouteWithChildren
+  '/recipes-old': typeof RecipesOldRouteWithChildren
+  '/recipes': typeof AuthenticatedRecipesRouteWithChildren
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/recipes-old/$recipeId': typeof RecipesOldRecipeIdRoute
+  '/recipes-old/new': typeof RecipesOldNewRoute
   '/recipes/$recipeId': typeof AuthenticatedRecipesRecipeIdRoute
   '/recipes/new': typeof AuthenticatedRecipesNewRoute
   '/auth/account-created': typeof AuthLayoutAccountCreatedRoute
@@ -255,12 +356,16 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLayoutLoginRoute
   '/auth/register': typeof AuthLayoutRegisterRoute
   '/auth/verify-account': typeof AuthLayoutVerifyAccountRoute
+  '/recipes/': typeof AuthenticatedRecipesIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof AuthenticatedRouteWithChildren
+  '/recipes-old': typeof RecipesOldRouteWithChildren
   '/auth': typeof AuthLayoutRouteWithChildren
+  '/recipes-old/$recipeId': typeof RecipesOldRecipeIdRoute
+  '/recipes-old/new': typeof RecipesOldNewRoute
   '/recipes/$recipeId': typeof AuthenticatedRecipesRecipeIdRoute
   '/recipes/new': typeof AuthenticatedRecipesNewRoute
   '/auth/account-created': typeof AuthLayoutAccountCreatedRoute
@@ -269,14 +374,19 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLayoutLoginRoute
   '/auth/register': typeof AuthLayoutRegisterRoute
   '/auth/verify-account': typeof AuthLayoutVerifyAccountRoute
+  '/recipes': typeof AuthenticatedRecipesIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/recipes-old': typeof RecipesOldRouteWithChildren
+  '/_authenticated/recipes': typeof AuthenticatedRecipesRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/auth/_layout': typeof AuthLayoutRouteWithChildren
+  '/recipes-old/$recipeId': typeof RecipesOldRecipeIdRoute
+  '/recipes-old/new': typeof RecipesOldNewRoute
   '/_authenticated/recipes/$recipeId': typeof AuthenticatedRecipesRecipeIdRoute
   '/_authenticated/recipes/new': typeof AuthenticatedRecipesNewRoute
   '/auth/_layout/account-created': typeof AuthLayoutAccountCreatedRoute
@@ -285,6 +395,7 @@ export interface FileRoutesById {
   '/auth/_layout/login': typeof AuthLayoutLoginRoute
   '/auth/_layout/register': typeof AuthLayoutRegisterRoute
   '/auth/_layout/verify-account': typeof AuthLayoutVerifyAccountRoute
+  '/_authenticated/recipes/': typeof AuthenticatedRecipesIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -292,7 +403,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | ''
+    | '/recipes-old'
+    | '/recipes'
     | '/auth'
+    | '/recipes-old/$recipeId'
+    | '/recipes-old/new'
     | '/recipes/$recipeId'
     | '/recipes/new'
     | '/auth/account-created'
@@ -301,11 +416,15 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/verify-account'
+    | '/recipes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | ''
+    | '/recipes-old'
     | '/auth'
+    | '/recipes-old/$recipeId'
+    | '/recipes-old/new'
     | '/recipes/$recipeId'
     | '/recipes/new'
     | '/auth/account-created'
@@ -314,12 +433,17 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/verify-account'
+    | '/recipes'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/recipes-old'
+    | '/_authenticated/recipes'
     | '/auth'
     | '/auth/_layout'
+    | '/recipes-old/$recipeId'
+    | '/recipes-old/new'
     | '/_authenticated/recipes/$recipeId'
     | '/_authenticated/recipes/new'
     | '/auth/_layout/account-created'
@@ -328,18 +452,21 @@ export interface FileRouteTypes {
     | '/auth/_layout/login'
     | '/auth/_layout/register'
     | '/auth/_layout/verify-account'
+    | '/_authenticated/recipes/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  RecipesOldRoute: typeof RecipesOldRouteWithChildren
   AuthRoute: typeof AuthRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  RecipesOldRoute: RecipesOldRouteWithChildren,
   AuthRoute: AuthRouteWithChildren,
 }
 
@@ -355,6 +482,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_authenticated",
+        "/recipes-old",
         "/auth"
       ]
     },
@@ -364,8 +492,23 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
+        "/_authenticated/recipes"
+      ]
+    },
+    "/recipes-old": {
+      "filePath": "recipes-old.tsx",
+      "children": [
+        "/recipes-old/$recipeId",
+        "/recipes-old/new"
+      ]
+    },
+    "/_authenticated/recipes": {
+      "filePath": "_authenticated/recipes.tsx",
+      "parent": "/_authenticated",
+      "children": [
         "/_authenticated/recipes/$recipeId",
-        "/_authenticated/recipes/new"
+        "/_authenticated/recipes/new",
+        "/_authenticated/recipes/"
       ]
     },
     "/auth": {
@@ -386,13 +529,21 @@ export const routeTree = rootRoute
         "/auth/_layout/verify-account"
       ]
     },
+    "/recipes-old/$recipeId": {
+      "filePath": "recipes-old/$recipeId.tsx",
+      "parent": "/recipes-old"
+    },
+    "/recipes-old/new": {
+      "filePath": "recipes-old/new.tsx",
+      "parent": "/recipes-old"
+    },
     "/_authenticated/recipes/$recipeId": {
       "filePath": "_authenticated/recipes/$recipeId.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/recipes"
     },
     "/_authenticated/recipes/new": {
       "filePath": "_authenticated/recipes/new.tsx",
-      "parent": "/_authenticated"
+      "parent": "/_authenticated/recipes"
     },
     "/auth/_layout/account-created": {
       "filePath": "auth/_layout.account-created.tsx",
@@ -417,6 +568,10 @@ export const routeTree = rootRoute
     "/auth/_layout/verify-account": {
       "filePath": "auth/_layout.verify-account.tsx",
       "parent": "/auth/_layout"
+    },
+    "/_authenticated/recipes/": {
+      "filePath": "_authenticated/recipes/index.tsx",
+      "parent": "/_authenticated/recipes"
     }
   }
 }

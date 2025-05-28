@@ -7,7 +7,7 @@ import { useGenerateRecipe } from '../../../hooks/useRecipes';
 import { useMetadata } from '../../../hooks/useMetadata';
 import type { AIRecipeRequest } from '../../../types';
 
-export const Route = createFileRoute('/_authenticated/recipes/new')({
+export const Route = createFileRoute('/recipes-old/new')({
   component: NewRecipePage,
 });
 

@@ -1,73 +1,114 @@
-export type NutritionInfo = {
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-    vitamins: {
-      a: number;
-      c: number;
-      d: number;
-    };
-    minerals: {
-      calcium: number;
-      iron: number;
-      magnesium: number;
-    };
+export interface NutritionInfo {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  vitamins: {
+    a: number;
+    c: number;
+    d: number;
   };
-  
-  export type Ingredient = {
-    id: string;
-    name: string;
-    quantity: string;
-    unit: string;
+  minerals: {
+    calcium: number;
+    iron: number;
+    magnesium: number;
   };
-  
-  export type RecipeType = 
-    | "entrée" 
-    | "plat principal" 
-    | "dessert" 
-    | "boisson" 
-    | "apéritif" 
-    | "accompagnement";
-  
-  export type DifficultyLevel = "facile" | "moyen" | "difficile";
-  
-  export type Allergy = 
-    | "gluten" 
-    | "lactose" 
-    | "oeufs" 
-    | "fruits à coque" 
-    | "arachides" 
-    | "soja" 
-    | "poisson" 
-    | "crustacés";
-  
-  export type Recipe = {
-    id: string;
-    title: string;
-    description: string;
-    type: RecipeType;
-    difficulty: DifficultyLevel;
-    prepTime: number; // in minutes
-    cookTime: number; // in minutes
-    servings: number;
-    ingredients: Ingredient[];
-    instructions: string[];
-    nutrition: NutritionInfo;
-    allergies: Allergy[];
-    imageUrl?: string;
-    createdAt: Date;
+}
+
+export interface Recipe {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  difficulty: string;
+  prepTime: number;
+  cookTime: number;
+  servings: number;
+  ingredients: string;
+  instructions: string;
+  nutrition: NutritionInfo;
+  allergies: string[];
+  imageUrl?: string;
+  createdAt: string;
+  isFavorite: boolean;
+}
+
+export interface RecipeFormInput {
+  ingredients: string[];
+  servings: number;
+  allergies: string[];
+  type?: string;
+  difficulty?: string;
+}
+
+export interface RecipeQuery {
+  search?: string;
+  type?: string;
+  difficulty?: string;
+  allergies?: string[];
+  page?: number;
+  limit?: number;
+}
+
+export interface AIRecipeRequest {
+  ingredients: string[];
+  servings: number;
+  allergies: string[];
+  type?: string;
+  difficulty?: string;
+}
+
+export interface AIRecipeResponse {
+  title: string;
+  description: string;
+  type: string;
+  difficulty: string;
+  prepTime: number;
+  cookTime: number;
+  servings: number;
+  ingredients: string;
+  instructions: string;
+  nutrition: NutritionInfo;
+}
+
+export interface APIResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
   };
-  
-  export type RecipeFormInput = {
-    ingredients: string[];
-    servings: number;
-    allergies: Allergy[];
-  };
-  
-  export type RecipeQuery = {
-    search?: string;
-    type?: RecipeType;
-    difficulty?: DifficultyLevel;
-    allergies?: Allergy[];
-  };
+}
+
+export interface Allergene {
+  id: string;
+  nom: string;
+  description?: string;
+}
+
+export interface TypePlat {
+  id: string;
+  nom: string;
+  description?: string;
+}
+
+export interface Ingredient {
+  id: string;
+  nom: string;
+  categorie?: string;
+  uniteParDefaut?: string;
+}
+
+export interface Metadata {
+  allergenes: Allergene[];
+  typesPlats: TypePlat[];
+  ingredients: Ingredient[];
+}
