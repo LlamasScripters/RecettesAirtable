@@ -6,12 +6,24 @@ API REST pour la gestion de recettes de cuisine avec intégration Airtable et IA
 
 ### Prérequis
 
-- Node.js (version 18 ou supérieure)
-- npm ou yarn
-- Ollama installé et configuré (pour l'IA)
+- Docker et Docker Compose
 - Accès à la base Airtable
 
-### Installation
+### Installation avec Docker (Recommandé)
+
+1. Démarrer tous les services :
+```bash
+docker compose up -d
+```
+
+2. Télécharger le modèle IA :
+```bash
+docker exec -it recettes-ollama ollama pull llama3.2:1b
+```
+
+3. L'API sera disponible sur `http://localhost:5000`
+
+### Installation manuelle
 
 1. Installer les dépendances :
 ```bash
@@ -19,48 +31,24 @@ npm install
 ```
 
 2. Configurer les variables d'environnement :
-Créer un fichier `.env` basé sur `env.example` et remplir les valeurs :
+Créer un fichier `.env` avec :
 
-```bash
-cp env.example .env
-```
-
-Puis éditer le fichier `.env` avec vos vraies valeurs :
 ```env
-AIRTABLE_API_KEY=patAkziDrnRcfJnYq.dbb86edaa974cf62552260f39eb0a318a18b75ba31cfeb601d0c7731bf765c93
-AIRTABLE_BASE_ID=appDPpmW0k6KYVeVe
+AIRTABLE_API_KEY=your_api_key
+AIRTABLE_BASE_ID=your_base_id
 PORT=5000
 NODE_ENV=development
 OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=llama3.2
+OLLAMA_MODEL=llama3.2:1b
 FRONTEND_URL=http://localhost:3000
 RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX_REQUESTS=100
 ```
 
-3. Démarrer Ollama (pour l'IA) :
+3. Démarrer le serveur :
 ```bash
-# Installer Ollama si pas encore fait
-curl -fsSL https://ollama.ai/install.sh | sh
-
-# Télécharger le modèle llama3.2
-ollama pull llama3.2
-
-# Démarrer le service Ollama
-ollama serve
-```
-
-4. Démarrer le serveur :
-```bash
-# Mode développement avec rechargement automatique
 npm run dev
-
-# Mode production
-npm run build
-npm start
 ```
-
-Le serveur sera disponible sur `http://localhost:5000`
 
 ## 📚 Documentation API
 
@@ -139,21 +127,40 @@ src/
 └── index.ts         # Point d'entrée
 ```
 
+## 🐳 Configuration Docker
+
+L'application utilise Docker Compose avec 3 services :
+
+- `recettes-ollama` : Service IA avec Ollama
+- `recettes-server` : API Node.js/Express  
+- `recettes-client` : Frontend React/Vite
+
+### Commandes Docker utiles
+
+```bash
+# Voir les logs
+docker compose logs -f
+
+# Redémarrer un service
+docker compose restart server
+
+# Arrêter tous les services
+docker compose down
+
+# Reconstruire les images
+docker compose build
+```
+
 ## 🔧 Configuration Ollama
 
-Le serveur utilise Ollama pour l'IA. Assurez-vous que :
+Pour utiliser un modèle différent :
 
-1. Ollama est installé et fonctionne
-2. Le modèle `llama3.2` est téléchargé
-3. Le service Ollama écoute sur `http://localhost:11434`
-
-Pour tester Ollama :
 ```bash
-curl http://localhost:11434/api/generate -d '{
-  "model": "llama3.2",
-  "prompt": "Hello world",
-  "stream": false
-}'
+# Télécharger un autre modèle
+docker exec -it recettes-ollama ollama pull tinyllama
+
+# Changer le modèle dans compose.yml
+OLLAMA_MODEL=tinyllama
 ```
 
 ## 🛡️ Sécurité
