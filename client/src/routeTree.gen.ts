@@ -20,6 +20,7 @@ import { Route as RecipesOldNewImport } from './routes/recipes-old/new'
 import { Route as RecipesOldRecipeIdImport } from './routes/recipes-old/$recipeId'
 import { Route as AuthLayoutImport } from './routes/auth/_layout'
 import { Route as AuthenticatedRecipesImport } from './routes/_authenticated/recipes'
+import { Route as AuthenticatedFavoritesImport } from './routes/_authenticated/favorites'
 import { Route as AuthenticatedRecipesIndexImport } from './routes/_authenticated/recipes/index'
 import { Route as AuthLayoutVerifyAccountImport } from './routes/auth/_layout.verify-account'
 import { Route as AuthLayoutRegisterImport } from './routes/auth/_layout.register'
@@ -29,6 +30,7 @@ import { Route as AuthLayoutAccountValidatedImport } from './routes/auth/_layout
 import { Route as AuthLayoutAccountCreatedImport } from './routes/auth/_layout.account-created'
 import { Route as AuthenticatedRecipesNewImport } from './routes/_authenticated/recipes/new'
 import { Route as AuthenticatedRecipesRecipeIdImport } from './routes/_authenticated/recipes/$recipeId'
+import { Route as AuthenticatedCategoriesTypeImport } from './routes/_authenticated/categories/$type'
 
 // Create Virtual Routes
 
@@ -79,6 +81,12 @@ const AuthLayoutRoute = AuthLayoutImport.update({
 const AuthenticatedRecipesRoute = AuthenticatedRecipesImport.update({
   id: '/recipes',
   path: '/recipes',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedFavoritesRoute = AuthenticatedFavoritesImport.update({
+  id: '/favorites',
+  path: '/favorites',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
@@ -139,6 +147,13 @@ const AuthenticatedRecipesRecipeIdRoute =
     getParentRoute: () => AuthenticatedRecipesRoute,
   } as any)
 
+const AuthenticatedCategoriesTypeRoute =
+  AuthenticatedCategoriesTypeImport.update({
+    id: '/categories/$type',
+    path: '/categories/$type',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -163,6 +178,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/recipes-old'
       preLoaderRoute: typeof RecipesOldImport
       parentRoute: typeof rootRoute
+    }
+    '/_authenticated/favorites': {
+      id: '/_authenticated/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof AuthenticatedFavoritesImport
+      parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/recipes': {
       id: '/_authenticated/recipes'
@@ -198,6 +220,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/recipes-old/new'
       preLoaderRoute: typeof RecipesOldNewImport
       parentRoute: typeof RecipesOldImport
+    }
+    '/_authenticated/categories/$type': {
+      id: '/_authenticated/categories/$type'
+      path: '/categories/$type'
+      fullPath: '/categories/$type'
+      preLoaderRoute: typeof AuthenticatedCategoriesTypeImport
+      parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/recipes/$recipeId': {
       id: '/_authenticated/recipes/$recipeId'
@@ -283,11 +312,15 @@ const AuthenticatedRecipesRouteWithChildren =
   AuthenticatedRecipesRoute._addFileChildren(AuthenticatedRecipesRouteChildren)
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedFavoritesRoute: typeof AuthenticatedFavoritesRoute
   AuthenticatedRecipesRoute: typeof AuthenticatedRecipesRouteWithChildren
+  AuthenticatedCategoriesTypeRoute: typeof AuthenticatedCategoriesTypeRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedFavoritesRoute: AuthenticatedFavoritesRoute,
   AuthenticatedRecipesRoute: AuthenticatedRecipesRouteWithChildren,
+  AuthenticatedCategoriesTypeRoute: AuthenticatedCategoriesTypeRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -344,10 +377,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof AuthenticatedRouteWithChildren
   '/recipes-old': typeof RecipesOldRouteWithChildren
+  '/favorites': typeof AuthenticatedFavoritesRoute
   '/recipes': typeof AuthenticatedRecipesRouteWithChildren
   '/auth': typeof AuthLayoutRouteWithChildren
   '/recipes-old/$recipeId': typeof RecipesOldRecipeIdRoute
   '/recipes-old/new': typeof RecipesOldNewRoute
+  '/categories/$type': typeof AuthenticatedCategoriesTypeRoute
   '/recipes/$recipeId': typeof AuthenticatedRecipesRecipeIdRoute
   '/recipes/new': typeof AuthenticatedRecipesNewRoute
   '/auth/account-created': typeof AuthLayoutAccountCreatedRoute
@@ -363,9 +398,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof AuthenticatedRouteWithChildren
   '/recipes-old': typeof RecipesOldRouteWithChildren
+  '/favorites': typeof AuthenticatedFavoritesRoute
   '/auth': typeof AuthLayoutRouteWithChildren
   '/recipes-old/$recipeId': typeof RecipesOldRecipeIdRoute
   '/recipes-old/new': typeof RecipesOldNewRoute
+  '/categories/$type': typeof AuthenticatedCategoriesTypeRoute
   '/recipes/$recipeId': typeof AuthenticatedRecipesRecipeIdRoute
   '/recipes/new': typeof AuthenticatedRecipesNewRoute
   '/auth/account-created': typeof AuthLayoutAccountCreatedRoute
@@ -382,11 +419,13 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/recipes-old': typeof RecipesOldRouteWithChildren
+  '/_authenticated/favorites': typeof AuthenticatedFavoritesRoute
   '/_authenticated/recipes': typeof AuthenticatedRecipesRouteWithChildren
   '/auth': typeof AuthRouteWithChildren
   '/auth/_layout': typeof AuthLayoutRouteWithChildren
   '/recipes-old/$recipeId': typeof RecipesOldRecipeIdRoute
   '/recipes-old/new': typeof RecipesOldNewRoute
+  '/_authenticated/categories/$type': typeof AuthenticatedCategoriesTypeRoute
   '/_authenticated/recipes/$recipeId': typeof AuthenticatedRecipesRecipeIdRoute
   '/_authenticated/recipes/new': typeof AuthenticatedRecipesNewRoute
   '/auth/_layout/account-created': typeof AuthLayoutAccountCreatedRoute
@@ -404,10 +443,12 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/recipes-old'
+    | '/favorites'
     | '/recipes'
     | '/auth'
     | '/recipes-old/$recipeId'
     | '/recipes-old/new'
+    | '/categories/$type'
     | '/recipes/$recipeId'
     | '/recipes/new'
     | '/auth/account-created'
@@ -422,9 +463,11 @@ export interface FileRouteTypes {
     | '/'
     | ''
     | '/recipes-old'
+    | '/favorites'
     | '/auth'
     | '/recipes-old/$recipeId'
     | '/recipes-old/new'
+    | '/categories/$type'
     | '/recipes/$recipeId'
     | '/recipes/new'
     | '/auth/account-created'
@@ -439,11 +482,13 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/recipes-old'
+    | '/_authenticated/favorites'
     | '/_authenticated/recipes'
     | '/auth'
     | '/auth/_layout'
     | '/recipes-old/$recipeId'
     | '/recipes-old/new'
+    | '/_authenticated/categories/$type'
     | '/_authenticated/recipes/$recipeId'
     | '/_authenticated/recipes/new'
     | '/auth/_layout/account-created'
@@ -492,7 +537,9 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
-        "/_authenticated/recipes"
+        "/_authenticated/favorites",
+        "/_authenticated/recipes",
+        "/_authenticated/categories/$type"
       ]
     },
     "/recipes-old": {
@@ -501,6 +548,10 @@ export const routeTree = rootRoute
         "/recipes-old/$recipeId",
         "/recipes-old/new"
       ]
+    },
+    "/_authenticated/favorites": {
+      "filePath": "_authenticated/favorites.tsx",
+      "parent": "/_authenticated"
     },
     "/_authenticated/recipes": {
       "filePath": "_authenticated/recipes.tsx",
@@ -536,6 +587,10 @@ export const routeTree = rootRoute
     "/recipes-old/new": {
       "filePath": "recipes-old/new.tsx",
       "parent": "/recipes-old"
+    },
+    "/_authenticated/categories/$type": {
+      "filePath": "_authenticated/categories/$type.tsx",
+      "parent": "/_authenticated"
     },
     "/_authenticated/recipes/$recipeId": {
       "filePath": "_authenticated/recipes/$recipeId.tsx",
