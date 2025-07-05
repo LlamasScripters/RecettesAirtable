@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AIRecipeRequest, AIRecipeResponse, NutritionInfo } from '../types';
 
 const OLLAMA_BASE_URL = process.env.OLLAMA_BASE_URL || 'http://localhost:11434';
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3.2';
+const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'tinyllama';
 
 export class AIService {
   private async callOllama(prompt: string): Promise<string> {
@@ -17,6 +17,9 @@ export class AIService {
       return response.data.response;
     } catch (error) {
       console.error('Erreur lors de l\'appel à Ollama:', error);
+      if (error.response?.status === 404) {
+        throw new Error(`Modèle '${OLLAMA_MODEL}' non trouvé. Veuillez télécharger le modèle avec: docker exec recettes-ollama ollama pull ${OLLAMA_MODEL}`);
+      }
       throw new Error('Service IA temporairement indisponible');
     }
   }

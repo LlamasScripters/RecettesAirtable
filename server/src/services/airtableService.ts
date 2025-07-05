@@ -94,18 +94,21 @@ export class AirtableService {
       
       console.log('📡 Appel à Airtable en cours...');
       // Configuration de la requête Airtable
-      const selectOptions: { 
-        sort: Array<{ field: string; direction: 'asc' | 'desc' }>; 
-        pageSize: number;
-        filterByFormula?: string;
-      } = {
-        sort: [{ field: 'dateCreation', direction: 'desc' }],
-        pageSize: 100
-      };
-      // N'ajouter filterByFormula que s'il y a des filtres
+      let selectOptions: any;
+      
       if (filters.length > 0) {
-        selectOptions.filterByFormula = `AND(${filters.join(', ')})`;
+        selectOptions = {
+          sort: [{ field: 'dateCreation', direction: 'desc' }],
+          pageSize: 100,
+          filterByFormula: `AND(${filters.join(', ')})`
+        };
         console.log('🔍 Filtre appliqué:', selectOptions.filterByFormula);
+      } else {
+        selectOptions = {
+          sort: [{ field: 'dateCreation', direction: 'desc' }],
+          pageSize: 100
+        };
+        console.log('🔍 Aucun filtre, récupération de tous les enregistrements');
       }
       
       await tables.recipes.select(selectOptions).eachPage((pageRecords, fetchNextPage) => {

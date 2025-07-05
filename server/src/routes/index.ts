@@ -13,8 +13,11 @@ router.use('/metadata', metadataRoutes);
 router.get('/health', (req: Request, res: Response): void => {
   res.json({
     success: true,
-    message: 'API Recettes fonctionnelle',
-    timestamp: new Date().toISOString()
+    data: {
+      status: 'healthy',
+      message: 'API Recettes fonctionnelle',
+      timestamp: new Date().toISOString()
+    }
   });
 });
 

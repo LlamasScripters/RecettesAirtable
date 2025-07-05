@@ -208,7 +208,7 @@ function NewRecipePage() {
                     onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                   >
-                    <option value="">Surprise-moi !</option>
+                    <option value="">Surprends-moi !</option>
                     {metadata?.typesPlats.map((type) => (
                       <option key={type.id} value={type.nom}>
                         {type.nom}

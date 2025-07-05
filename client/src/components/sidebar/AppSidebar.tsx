@@ -4,9 +4,9 @@ import {
   Home,
   PlusCircle,
   Heart,
-  Settings,
   Sun,
   Moon,
+  BookOpen,
 } from "lucide-react";
 import { Link, useLocation } from "@tanstack/react-router";
 
@@ -60,6 +60,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
+                isActive={location.pathname === "/recipes"}
+                tooltip="Toutes les recettes"
+              >
+                <Link to="/recipes">
+                  <BookOpen className="h-5 w-5" />
+                  <span>Toutes les recettes</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
                 isActive={location.pathname === "/recipes/new"}
                 tooltip="Créer une nouvelle recette"
               >
@@ -82,7 +94,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 tooltip="Entrées"
               >
                 <Link to="/categories/$type" params={{ type: "starters" }}>
-                  <ChefHat className="h-5 w-5" />
+                  <span className="text-lg">🥗</span>
                   <span>Entrées</span>
                 </Link>
               </SidebarMenuButton>
@@ -91,10 +103,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarMenuButton
                 asChild
                 isActive={location.pathname === "/categories/main-dishes"}
-                tooltip="Plats"
+                tooltip="Plats principaux"
               >
                 <Link to="/categories/$type" params={{ type: "main-dishes" }}>
-                  <ChefHat className="h-5 w-5" />
+                  <span className="text-lg">🍽️</span>
                   <span>Plats principaux</span>
                 </Link>
               </SidebarMenuButton>
@@ -106,8 +118,32 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 tooltip="Desserts"
               >
                 <Link to="/categories/$type" params={{ type: "desserts" }}>
-                  <ChefHat className="h-5 w-5" />
+                  <span className="text-lg">🍰</span>
                   <span>Desserts</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={location.pathname === "/categories/sides"}
+                tooltip="Accompagnements"
+              >
+                <Link to="/categories/$type" params={{ type: "sides" }}>
+                  <span className="text-lg">🥖</span>
+                  <span>Accompagnements</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                asChild
+                isActive={location.pathname === "/categories/drinks"}
+                tooltip="Boissons"
+              >
+                <Link to="/categories/$type" params={{ type: "drinks" }}>
+                  <span className="text-lg">🥤</span>
+                  <span>Boissons</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -126,18 +162,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <Link to="/favorites">
                   <Heart className="h-5 w-5" />
                   <span>Mes favoris</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                asChild
-                isActive={location.pathname === "/settings"}
-                tooltip="Paramètres"
-              >
-                <Link to="/settings">
-                  <Settings className="h-5 w-5" />
-                  <span>Paramètres</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
