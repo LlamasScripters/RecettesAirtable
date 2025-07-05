@@ -34,7 +34,7 @@ npm install
 Créer un fichier `.env` avec :
 
 ```env
-AIRTABLE_API_KEY=your_api_key
+AIRTABLE_API_KEY=
 AIRTABLE_BASE_ID=your_base_id
 PORT=5000
 NODE_ENV=development
