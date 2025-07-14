@@ -1,4 +1,4 @@
-import * as React from "react";
+import type * as React from "react";
 import {
   ChefHat,
   Home,
@@ -9,6 +9,7 @@ import {
   BookOpen,
 } from "lucide-react";
 import { Link, useLocation } from "@tanstack/react-router";
+import { useTheme } from "../../contexts/ThemeContext";
 
 import {
   Sidebar,
@@ -23,11 +24,10 @@ import {
   SidebarHeader,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useRecipeStore } from "@/features/recipes/stores/recipes.store";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const location = useLocation();
-  const { darkMode, toggleDarkMode } = useRecipeStore();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -173,15 +173,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              onClick={toggleDarkMode}
-              tooltip={darkMode ? "Mode clair" : "Mode sombre"}
+              onClick={toggleTheme}
+              tooltip={theme === 'dark' ? "Mode clair" : "Mode sombre"}
             >
-              {darkMode ? (
+              {theme === 'dark' ? (
                 <Sun className="h-5 w-5" />
               ) : (
                 <Moon className="h-5 w-5" />
               )}
-              <span>{darkMode ? "Mode clair" : "Mode sombre"}</span>
+              <span>{theme === 'dark' ? "Mode clair" : "Mode sombre"}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

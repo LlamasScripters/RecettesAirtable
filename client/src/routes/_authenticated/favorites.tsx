@@ -42,10 +42,10 @@ function FavoritesPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Erreur de chargement</h2>
-          <p className="text-gray-600">{error.message}</p>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Erreur de chargement</h2>
+          <p className="text-muted-foreground">{error.message}</p>
           <Button onClick={() => window.location.reload()} className="mt-4">
             Réessayer
           </Button>
@@ -55,17 +55,17 @@ function FavoritesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-card shadow-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
                 <Heart className="w-8 h-8 text-red-500" />
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900">Mes Favoris</h1>
-                  <p className="text-gray-600 mt-1">
+                  <h1 className="text-3xl font-bold text-foreground">Mes Favoris</h1>
+                  <p className="text-muted-foreground mt-1">
                     Vos recettes préférées en un seul endroit
                   </p>
                 </div>
@@ -73,7 +73,7 @@ function FavoritesPage() {
             </div>
             <Button
               onClick={handleCreateRecipe}
-              className="bg-orange-500 hover:bg-orange-600 text-white"
+              className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white"
             >
               <Plus className="w-4 h-4 mr-2" />
               Générer une recette
@@ -84,10 +84,10 @@ function FavoritesPage() {
 
       {/* Recherche */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
+        <div className="bg-card rounded-lg shadow-sm border border-border p-4 mb-6">
           <div className="max-w-md">
             <div className="relative">
-              <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Rechercher dans vos favoris..."
                 className="pl-10"
@@ -106,16 +106,16 @@ function FavoritesPage() {
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
-            <span className="ml-2 text-gray-600">Chargement de vos favoris...</span>
+            <span className="ml-2 text-muted-foreground">Chargement de vos favoris...</span>
           </div>
         ) : favoriteRecipes.length === 0 ? (
           <div className="text-center py-12">
             <div className="max-w-md mx-auto">
-              <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <Heart className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-foreground mb-2">
                 Aucun favori pour le moment
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-muted-foreground mb-4">
                 Ajoutez des recettes à vos favoris en cliquant sur le cœur lors de la consultation d'une recette.
               </p>
               <Button 
@@ -137,7 +137,7 @@ function FavoritesPage() {
           <>
             {/* Statistiques */}
             <div className="mb-6">
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 {favoriteRecipes.length} recette{favoriteRecipes.length > 1 ? 's' : ''} favorite{favoriteRecipes.length > 1 ? 's' : ''}
               </p>
             </div>
@@ -175,7 +175,7 @@ function FavoritesPage() {
                     .map((page, index, array) => (
                       <>
                         {index > 0 && array[index - 1] !== page - 1 && (
-                          <span key={`ellipsis-${page}`} className="px-2 text-gray-400">...</span>
+                          <span key={`ellipsis-${page}`} className="px-2 text-muted-foreground">...</span>
                         )}
                         <Button
                           key={page}

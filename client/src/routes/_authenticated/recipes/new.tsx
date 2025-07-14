@@ -89,9 +89,9 @@ function NewRecipePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-card shadow-sm border-b border-border">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <Button
@@ -105,7 +105,7 @@ function NewRecipePage() {
             </Button>
             <div className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-orange-500" />
-              <h1 className="text-xl font-semibold text-gray-900">Générateur de recettes IA</h1>
+              <h1 className="text-xl font-semibold text-foreground">Générateur de recettes IA</h1>
             </div>
           </div>
         </div>
@@ -113,9 +113,9 @@ function NewRecipePage() {
 
       {/* Contenu principal */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
           {/* Header du formulaire */}
-          <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-6 text-white">
+          <div className="bg-gradient-to-r from-orange-500 to-amber-500 dark:from-orange-600 dark:to-amber-600 p-6 text-white">
             <div className="flex items-center gap-3 mb-2">
               <ChefHat className="w-8 h-8" />
               <h2 className="text-2xl font-bold">Créer une recette personnalisée</h2>
@@ -129,10 +129,10 @@ function NewRecipePage() {
           <form onSubmit={handleSubmit} className="p-6 space-y-8">
             {/* Section Ingrédients */}
             <div>
-              <label htmlFor="ingredients-input" className="block text-lg font-semibold text-gray-900 mb-3">
+              <label htmlFor="ingredients-input" className="block text-lg font-semibold text-foreground mb-3">
                 Ingrédients disponibles *
               </label>
-              <p className="text-gray-600 mb-4">
+              <p className="text-muted-foreground mb-4">
                 Quels ingrédients avez-vous dans votre frigo ou votre placard ?
               </p>
               
@@ -181,7 +181,7 @@ function NewRecipePage() {
               {/* Portions et Type */}
               <div className="space-y-6">
                 <div>
-                  <label htmlFor="servings-input" className="block text-lg font-semibold text-gray-900 mb-3">
+                  <label htmlFor="servings-input" className="block text-lg font-semibold text-foreground mb-3">
                     Nombre de portions
                   </label>
                   <Input
@@ -199,7 +199,7 @@ function NewRecipePage() {
                 </div>
 
                 <div>
-                  <label htmlFor="type-select" className="block text-lg font-semibold text-gray-900 mb-3">
+                  <label htmlFor="type-select" className="block text-lg font-semibold text-foreground mb-3">
                     Type de plat
                   </label>
                   <select
@@ -218,7 +218,7 @@ function NewRecipePage() {
                 </div>
 
                 <div>
-                  <label htmlFor="difficulty-select" className="block text-lg font-semibold text-gray-900 mb-3">
+                  <label htmlFor="difficulty-select" className="block text-lg font-semibold text-foreground mb-3">
                     Niveau de difficulté
                   </label>
                   <select
@@ -236,10 +236,10 @@ function NewRecipePage() {
 
               {/* Allergies */}
               <div>
-                <label htmlFor="allergies-input" className="block text-lg font-semibold text-gray-900 mb-3">
+                <label htmlFor="allergies-input" className="block text-lg font-semibold text-foreground mb-3">
                   Allergies et intolérances
                 </label>
-                <p className="text-gray-600 mb-4">
+                <p className="text-muted-foreground mb-4">
                   Précisez vos allergies pour une recette adaptée
                 </p>
                 
@@ -287,7 +287,7 @@ function NewRecipePage() {
             {/* Bouton de génération */}
             <div className="pt-6 border-t border-gray-200">
               <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-muted-foreground">
                   {formData.ingredients.length > 0 ? (
                     `${formData.ingredients.length} ingrédient${formData.ingredients.length > 1 ? 's' : ''} ajouté${formData.ingredients.length > 1 ? 's' : ''}`
                   ) : (

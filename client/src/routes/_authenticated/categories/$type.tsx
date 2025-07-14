@@ -1,11 +1,10 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
-import { Search, Filter, Plus, Loader2, ChefHat } from 'lucide-react';
+import { Search, Plus, Loader2 } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { RecipeCard } from '../../../components/RecipeCard';
 import { useRecipes } from '../../../hooks/useRecipes';
-import { useMetadata } from '../../../hooks/useMetadata';
 import type { RecipeQuery } from '../../../types';
 
 export const Route = createFileRoute('/_authenticated/categories/$type')({
@@ -58,7 +57,6 @@ function CategoryPage() {
   });
 
   const { data: recipesData, isLoading, error } = useRecipes(query);
-  const { data: metadata } = useMetadata();
 
   const handleSearch = (search: string) => {
     setQuery(prev => ({ ...prev, search: search || undefined, page: 1 }));
@@ -88,10 +86,10 @@ function CategoryPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Erreur de chargement</h2>
-          <p className="text-gray-600">{error.message}</p>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Erreur de chargement</h2>
+          <p className="text-muted-foreground">{error.message}</p>
           <Button onClick={() => window.location.reload()} className="mt-4">
             Réessayer
           </Button>
@@ -101,17 +99,17 @@ function CategoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-card shadow-sm border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <div className="flex items-center gap-3">
                 <div className="text-4xl">{category.icon}</div>
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900">{category.name}</h1>
-                  <p className="text-gray-600 mt-1">{category.description}</p>
+                  <h1 className="text-3xl font-bold text-foreground">{category.name}</h1>
+                  <p className="text-muted-foreground mt-1">{category.description}</p>
                 </div>
               </div>
             </div>
@@ -128,12 +126,12 @@ function CategoryPage() {
 
       {/* Filtres et recherche */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="bg-white rounded-lg shadow-sm border p-4 mb-6">
+        <div className="bg-card rounded-lg shadow-sm border border-border p-4 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Barre de recherche */}
             <div className="md:col-span-2">
               <div className="relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder={`Rechercher dans les ${category.name.toLowerCase()}...`}
                   className="pl-10"
@@ -152,7 +150,7 @@ function CategoryPage() {
               <select
                 value={query.difficulty || ''}
                 onChange={(e) => handleFilterChange('difficulty', e.target.value || undefined)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
               >
                 <option value="">Toutes difficultés</option>
                 <option value="Facile">Facile</option>
@@ -167,16 +165,16 @@ function CategoryPage() {
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
-            <span className="ml-2 text-gray-600">Chargement des {category.name.toLowerCase()}...</span>
+            <span className="ml-2 text-muted-foreground">Chargement des {category.name.toLowerCase()}...</span>
           </div>
         ) : recipesData?.data.length === 0 ? (
           <div className="text-center py-12">
             <div className="max-w-md mx-auto">
               <div className="text-6xl mb-4">{category.icon}</div>
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
+              <h3 className="text-lg font-medium text-foreground mb-2">
                 Aucune recette trouvée
               </h3>
-              <p className="text-gray-600 mb-4">
+              <p className="text-muted-foreground mb-4">
                 Il n'y a pas encore de {category.name.toLowerCase()} correspondant à vos critères.
               </p>
               <Button onClick={handleCreateRecipe} className="bg-orange-500 hover:bg-orange-600">
@@ -189,7 +187,7 @@ function CategoryPage() {
           <>
             {/* Statistiques */}
             <div className="mb-6">
-              <p className="text-gray-600">
+              <p className="text-muted-foreground">
                 {recipesData?.pagination.total} {category.name.toLowerCase()} trouvée{(recipesData?.pagination.total || 0) > 1 ? 's' : ''}
               </p>
             </div>
@@ -227,7 +225,7 @@ function CategoryPage() {
                     .map((page, index, array) => (
                       <>
                         {index > 0 && array[index - 1] !== page - 1 && (
-                          <span key={`ellipsis-${page}`} className="px-2 text-gray-400">...</span>
+                          <span key={`ellipsis-${page}`} className="px-2 text-muted-foreground">...</span>
                         )}
                         <Button
                           key={page}

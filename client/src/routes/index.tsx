@@ -20,21 +20,21 @@ function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-amber-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-background to-amber-50 dark:from-orange-950/20 dark:via-background dark:to-amber-950/20">
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-20">
           <div className="text-center">
             {/* Logo et titre principal */}
             <div className="mb-8">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-orange-500 rounded-full mb-6">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-orange-500 dark:bg-orange-600 rounded-full mb-6">
                 <ChefHat className="w-10 h-10 text-white" />
               </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 mb-4">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-foreground mb-4">
                 Recettes
-                <span className="text-orange-500 ml-3">Airtable</span>
+                <span className="text-orange-500 dark:text-orange-400 ml-3">Airtable</span>
               </h1>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
                 Découvrez, créez et partagez de délicieuses recettes avec l'aide de 
                 l'intelligence artificielle. Votre compagnon culinaire pour des repas savoureux.
               </p>
@@ -43,17 +43,17 @@ function HomePage() {
             {/* Status API */}
             <div className="mb-8">
               {healthLoading ? (
-                <div className="inline-flex items-center px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
+                <div className="inline-flex items-center px-3 py-1 bg-yellow-100 dark:bg-yellow-900/20 text-yellow-800 dark:text-yellow-300 rounded-full text-sm">
                   <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse mr-2" />
                   Vérification du service...
                 </div>
               ) : healthData ? (
-                <div className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
+                <div className="inline-flex items-center px-3 py-1 bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300 rounded-full text-sm">
                   <div className="w-2 h-2 bg-green-400 rounded-full mr-2" />
                   Service opérationnel
                 </div>
               ) : (
-                <div className="inline-flex items-center px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm">
+                <div className="inline-flex items-center px-3 py-1 bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-300 rounded-full text-sm">
                   <div className="w-2 h-2 bg-red-400 rounded-full mr-2" />
                   Service indisponible
                 </div>
@@ -65,7 +65,7 @@ function HomePage() {
               <Button
                 onClick={handleExploreRecipes}
                 size="lg"
-                className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 text-lg"
+                className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white px-8 py-3 text-lg"
               >
                 <Search className="w-5 h-5 mr-2" />
                 Explorer les recettes
@@ -74,7 +74,7 @@ function HomePage() {
                 onClick={handleGenerateRecipe}
                 size="lg"
                 variant="outline"
-                className="border-orange-500 text-orange-500 hover:bg-orange-50 px-8 py-3 text-lg"
+                className="border-orange-500 text-orange-500 hover:bg-orange-50 dark:border-orange-400 dark:text-orange-400 dark:hover:bg-orange-900/20 px-8 py-3 text-lg"
               >
                 <Sparkles className="w-5 h-5 mr-2" />
                 Générer avec l'IA
@@ -84,18 +84,18 @@ function HomePage() {
         </div>
 
         {/* Formes décoratives */}
-        <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-orange-200 rounded-full opacity-20 blur-3xl" />
-        <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-amber-200 rounded-full opacity-20 blur-3xl" />
+        <div className="absolute top-0 left-0 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-orange-200 dark:bg-orange-800/20 rounded-full opacity-20 blur-3xl" />
+        <div className="absolute bottom-0 right-0 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-amber-200 dark:bg-amber-800/20 rounded-full opacity-20 blur-3xl" />
       </div>
 
       {/* Features Section */}
-      <div className="py-16 bg-white">
+      <div className="py-16 bg-card dark:bg-card">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl font-bold text-foreground mb-4">
               Pourquoi choisir Recettes Airtable ?
             </h2>
-            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
               Une expérience culinaire moderne alliant technologie et gastronomie
             </p>
           </div>

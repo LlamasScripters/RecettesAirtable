@@ -20,9 +20,9 @@ export function RecipeCard({ recipe, onViewDetails }: RecipeCardProps) {
   };
 
   return (
-    <div className="group relative bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
+    <div className="group relative bg-card rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-border">
       {/* Image placeholder ou vraie image */}
-      <div className="relative h-48 bg-gradient-to-br from-orange-100 to-amber-50 overflow-hidden">
+      <div className="relative h-48 bg-gradient-to-br from-orange-100 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 overflow-hidden">
         {recipe.imageUrl ? (
           <img
             src={recipe.imageUrl}
@@ -31,7 +31,7 @@ export function RecipeCard({ recipe, onViewDetails }: RecipeCardProps) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <ChefHat className="w-16 h-16 text-orange-300" />
+            <ChefHat className="w-16 h-16 text-orange-300 dark:text-orange-600" />
           </div>
         )}
         
@@ -47,13 +47,13 @@ export function RecipeCard({ recipe, onViewDetails }: RecipeCardProps) {
           type="button"
           onClick={handleToggleFavorite}
           disabled={toggleFavorite.isPending}
-          className="absolute top-3 right-3 p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors duration-200"
+          className="absolute top-3 right-3 p-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full hover:bg-white dark:hover:bg-gray-800 transition-colors duration-200"
         >
           <Heart
             className={`w-4 h-4 transition-colors duration-200 ${
               recipe.isFavorite
                 ? 'fill-red-500 text-red-500'
-                : 'text-gray-600 hover:text-red-500'
+                : 'text-gray-600 dark:text-gray-300 hover:text-red-500'
             }`}
           />
         </button>
@@ -63,16 +63,16 @@ export function RecipeCard({ recipe, onViewDetails }: RecipeCardProps) {
       <div className="p-4">
         {/* Titre et description */}
         <div className="mb-3">
-          <h3 className="font-semibold text-lg text-gray-900 line-clamp-1 mb-1">
+          <h3 className="font-semibold text-lg text-foreground line-clamp-1 mb-1">
             {recipe.title}
           </h3>
-          <p className="text-gray-600 text-sm line-clamp-2">
+          <p className="text-muted-foreground text-sm line-clamp-2">
             {recipe.description}
           </p>
         </div>
 
         {/* Métadonnées */}
-        <div className="flex items-center gap-4 text-xs text-gray-500 mb-3">
+        <div className="flex items-center gap-4 text-xs text-muted-foreground mb-3">
           <div className="flex items-center gap-1">
             <Clock className="w-3 h-3" />
             <span>{recipe.prepTime + recipe.cookTime} min</span>
@@ -92,23 +92,23 @@ export function RecipeCard({ recipe, onViewDetails }: RecipeCardProps) {
         </div>
 
         {/* Informations nutritionnelles */}
-        <div className="bg-gray-50 rounded-lg p-3 mb-3">
+        <div className="bg-muted rounded-lg p-3 mb-3">
           <div className="grid grid-cols-4 gap-2 text-center text-xs">
             <div>
-              <div className="font-semibold text-gray-900">{recipe.nutrition.calories}</div>
-              <div className="text-gray-500">cal</div>
+              <div className="font-semibold text-foreground">{recipe.nutrition.calories}</div>
+              <div className="text-muted-foreground">cal</div>
             </div>
             <div>
-              <div className="font-semibold text-gray-900">{recipe.nutrition.protein}g</div>
-              <div className="text-gray-500">prot.</div>
+              <div className="font-semibold text-foreground">{recipe.nutrition.protein}g</div>
+              <div className="text-muted-foreground">prot.</div>
             </div>
             <div>
-              <div className="font-semibold text-gray-900">{recipe.nutrition.carbs}g</div>
-              <div className="text-gray-500">gluc.</div>
+              <div className="font-semibold text-foreground">{recipe.nutrition.carbs}g</div>
+              <div className="text-muted-foreground">gluc.</div>
             </div>
             <div>
-              <div className="font-semibold text-gray-900">{recipe.nutrition.fat}g</div>
-              <div className="text-gray-500">lip.</div>
+              <div className="font-semibold text-foreground">{recipe.nutrition.fat}g</div>
+              <div className="text-muted-foreground">lip.</div>
             </div>
           </div>
         </div>
@@ -120,13 +120,13 @@ export function RecipeCard({ recipe, onViewDetails }: RecipeCardProps) {
               {recipe.allergies.slice(0, 3).map((allergy) => (
                 <span
                   key={allergy}
-                  className="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full"
+                  className="px-2 py-1 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 text-xs rounded-full"
                 >
                   {allergy}
                 </span>
               ))}
               {recipe.allergies.length > 3 && (
-                <span className="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">
+                <span className="px-2 py-1 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 text-xs rounded-full">
                   +{recipe.allergies.length - 3}
                 </span>
               )}
@@ -137,7 +137,7 @@ export function RecipeCard({ recipe, onViewDetails }: RecipeCardProps) {
         {/* Bouton voir détails */}
         <Button
           onClick={handleViewDetails}
-          className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+          className="w-full bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white"
           size="sm"
         >
           Voir la recette

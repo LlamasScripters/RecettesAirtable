@@ -112,3 +112,7 @@ export interface Metadata {
   typesPlats: TypePlat[];
   ingredients: Ingredient[];
 }
+
+export type RecipeType = "Entrée" | "Plat principal" | "Dessert" | "Accompagnement" | "Boisson";
+export type DifficultyLevel = "Facile" | "Moyen" | "Difficile";
+export type Allergy = string; 
