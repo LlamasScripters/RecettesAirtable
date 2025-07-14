@@ -113,4 +113,15 @@ class ApiService {
 }
 
 export const apiService = new ApiService();
-export default apiService; 
+export default apiService;
+
+// Exports pour compatibilité avec les hooks
+export const fetchRecipes = (query: RecipeQuery = {}) => apiService.getRecipes(query);
+export const fetchRecipeById = (id: string) => apiService.getRecipeById(id);
+export const generateRecipe = (request: AIRecipeRequest) => apiService.generateRecipe(request);
+export const analyzeNutrition = (ingredients: string) => apiService.analyzeNutrition(ingredients);
+export const updateRecipe = (id: string, updates: Partial<Recipe>) => apiService.updateRecipe(id, updates);
+export const deleteRecipe = (id: string) => apiService.deleteRecipe(id);
+export const toggleFavorite = (id: string) => apiService.toggleFavorite(id);
+export const fetchMetadata = () => apiService.getMetadata();
+export const healthCheck = () => apiService.healthCheck(); 

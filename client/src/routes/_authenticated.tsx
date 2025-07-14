@@ -2,6 +2,7 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { PWAInstaller } from "@/components/PWAInstaller";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
@@ -19,6 +20,7 @@ function AuthenticatedLayout() {
           </div>
         </header>
         <Outlet />
+        <PWAInstaller />
       </SidebarInset>
     </SidebarProvider>
   );

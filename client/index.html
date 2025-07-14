@@ -1,20 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨‍🍳</text></svg>" />
+    
+    <!-- PWA Configuration -->
     <meta name="theme-color" content="#f97316" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#ea580c" />
+    <meta name="application-name" content="RecettesAI" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="RecettesAI" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="msapplication-TileColor" content="#f97316" />
+    <meta name="msapplication-navbutton-color" content="#f97316" />
+    
+    <!-- SEO et Description -->
     <meta
       name="description"
       content="Générateur de recettes intelligent avec IA - Découvrez et créez de délicieuses recettes personnalisées"
     />
+    <meta name="keywords" content="recettes, cuisine, IA, intelligence artificielle, générateur, food, cooking" />
+    <meta name="author" content="RecettesAI Team" />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="RecettesAI - Générateur de recettes IA" />
+    <meta property="og:description" content="Générateur de recettes intelligent avec IA - Découvrez et créez de délicieuses recettes personnalisées" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/logo512.png" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="RecettesAI - Générateur de recettes IA" />
+    <meta name="twitter:description" content="Générateur de recettes intelligent avec IA" />
+    <meta name="twitter:image" content="/logo512.png" />
+    
+    <!-- Icons -->
     <link rel="apple-touch-icon" href="/logo192.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/logo192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/logo512.png" />
     <link rel="manifest" href="/manifest.json" />
-    <title>RecettesAirtable - Générateur de recettes IA</title>
+    
+    <title>RecettesAI - Générateur de recettes IA</title>
   </head>
   <body>
     <div id="app"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+              console.log('SW registered: ', registration);
+            })
+            .catch(registrationError => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

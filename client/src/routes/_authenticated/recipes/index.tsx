@@ -1,10 +1,12 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
-import { Search, Filter, Plus, Loader2 } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { Search, Filter, Plus, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
-import { RecipeCard } from '../../../components/RecipeCard';
-import { useRecipes } from '../../../hooks/useRecipes';
+import { RecipeList } from '../../../components/RecipeList';
+import { ViewModeToggle, type ViewMode } from '../../../components/ViewModeToggle';
+import { useInfiniteRecipes } from '../../../hooks/useInfiniteRecipes';
+import { useInfiniteScroll } from '../../../hooks/useInfiniteScroll';
 import { useMetadata } from '../../../hooks/useMetadata';
 import type { RecipeQuery } from '../../../types';
 
@@ -14,25 +16,47 @@ export const Route = createFileRoute('/_authenticated/recipes/')({
 
 function RecipesPage() {
   const navigate = useNavigate();
-  const [query, setQuery] = useState<RecipeQuery>({
-    page: 1,
-    limit: 12,
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    return (localStorage.getItem('recipe-view-mode') as ViewMode) || 'grid';
   });
+  const [query, setQuery] = useState<Omit<RecipeQuery, 'page' | 'limit'>>({});
 
-  const { data: recipesData, isLoading, error } = useRecipes(query);
+  const {
+    recipes,
+    totalRecipes,
+    hasNextPage,
+    isLoadingMore,
+    isLoading,
+    error,
+    fetchNextPage,
+    refetch,
+    isRefetching
+  } = useInfiniteRecipes(query);
+
   const { data: metadata } = useMetadata();
 
-  const handleSearch = (search: string) => {
-    setQuery(prev => ({ ...prev, search: search || undefined, page: 1 }));
-  };
+  // Gestion de la persistance du mode d'affichage
+  useEffect(() => {
+    localStorage.setItem('recipe-view-mode', viewMode);
+  }, [viewMode]);
 
-  const handleFilterChange = (key: keyof RecipeQuery, value: string | undefined) => {
-    setQuery(prev => ({ ...prev, [key]: value, page: 1 }));
-  };
+  const handleSearch = useCallback((search: string) => {
+    setQuery(prev => ({ ...prev, search: search || undefined }));
+  }, []);
 
-  const handlePageChange = (page: number) => {
-    setQuery(prev => ({ ...prev, page }));
-  };
+  const handleFilterChange = useCallback((key: keyof RecipeQuery, value: string | undefined) => {
+    setQuery(prev => ({ ...prev, [key]: value }));
+  }, []);
+
+  const handleLoadMore = useCallback(() => {
+    if (hasNextPage && !isLoadingMore) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isLoadingMore, fetchNextPage]);
+
+  const { loaderRef } = useInfiniteScroll(handleLoadMore, {
+    enabled: hasNextPage && !isLoadingMore
+  });
 
   const handleViewRecipe = (id: string) => {
     navigate({ to: '/recipes/$recipeId', params: { recipeId: id } });
@@ -66,15 +90,30 @@ function RecipesPage() {
               <h1 className="text-3xl font-bold text-foreground">Recettes</h1>
               <p className="text-muted-foreground mt-1">
                 Découvrez et créez de délicieuses recettes
+                {totalRecipes > 0 && ` • ${totalRecipes} recette${totalRecipes > 1 ? 's' : ''}`}
               </p>
             </div>
-            <Button
-              onClick={handleCreateRecipe}
-              className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Générer une recette
-            </Button>
+            <div className="flex items-center gap-3">
+              <ViewModeToggle 
+                viewMode={viewMode} 
+                onViewModeChange={setViewMode}
+              />
+              <Button
+                onClick={() => refetch()}
+                variant="outline"
+                size="sm"
+                disabled={isRefetching}
+              >
+                <RefreshCw className={`w-4 h-4 ${isRefetching ? 'animate-spin' : ''}`} />
+              </Button>
+              <Button
+                onClick={handleCreateRecipe}
+                className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Générer une recette
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -138,7 +177,7 @@ function RecipesPage() {
             <Loader2 className="w-8 h-8 animate-spin text-orange-500" />
             <span className="ml-2 text-muted-foreground">Chargement des recettes...</span>
           </div>
-        ) : recipesData?.data.length === 0 ? (
+        ) : recipes.length === 0 ? (
           <div className="text-center py-12">
             <div className="max-w-md mx-auto">
               <Filter className="w-16 h-16 text-muted-foreground/50 mx-auto mb-4" />
@@ -156,62 +195,27 @@ function RecipesPage() {
           </div>
         ) : (
           <>
-            {/* Grille des recettes */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-              {recipesData?.data.map((recipe) => (
-                <RecipeCard
-                  key={recipe.id}
-                  recipe={recipe}
-                  onViewDetails={handleViewRecipe}
-                />
-              ))}
-            </div>
+            {/* Liste des recettes avec layout adaptatif */}
+            <RecipeList
+              recipes={recipes}
+              onViewDetails={handleViewRecipe}
+              viewMode={viewMode}
+            />
 
-            {/* Pagination */}
-            {recipesData && recipesData.pagination.totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={query.page === 1}
-                  onClick={() => handlePageChange((query.page || 1) - 1)}
-                >
-                  Précédent
-                </Button>
-                
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: recipesData.pagination.totalPages }, (_, i) => i + 1)
-                    .filter(page => 
-                      page === 1 ||
-                      page === recipesData.pagination.totalPages ||
-                      Math.abs(page - (query.page || 1)) <= 2
-                    )
-                    .map((page, index, array) => (
-                      <>
-                        {index > 0 && array[index - 1] !== page - 1 && (
-                          <span key={`ellipsis-${page}`} className="px-2 text-muted-foreground">...</span>
-                        )}
-                        <Button
-                          key={page}
-                          variant={page === query.page ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => handlePageChange(page)}
-                          className={page === query.page ? "bg-orange-500 hover:bg-orange-600" : ""}
-                        >
-                          {page}
-                        </Button>
-                      </>
-                    ))}
-                </div>
+            {/* Infinite scroll loader */}
+            {hasNextPage && (
+              <div ref={loaderRef} className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-orange-500" />
+                <span className="ml-2 text-muted-foreground">Chargement...</span>
+              </div>
+            )}
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={query.page === recipesData.pagination.totalPages}
-                  onClick={() => handlePageChange((query.page || 1) + 1)}
-                >
-                  Suivant
-                </Button>
+            {/* Indicateur de fin */}
+            {!hasNextPage && recipes.length > 0 && (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground text-sm">
+                  Vous avez vu toutes les recettes disponibles
+                </p>
               </div>
             )}
           </>

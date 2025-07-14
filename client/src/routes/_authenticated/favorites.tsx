@@ -1,10 +1,12 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
-import { Search, Heart, Plus, Loader2 } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { Search, Heart, Plus, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { RecipeCard } from '../../components/RecipeCard';
-import { useRecipes } from '../../hooks/useRecipes';
+import { RecipeList } from '../../components/RecipeList';
+import { ViewModeToggle, type ViewMode } from '../../components/ViewModeToggle';
+import { useInfiniteRecipes } from '../../hooks/useInfiniteRecipes';
+import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import type { RecipeQuery } from '../../types';
 
 export const Route = createFileRoute('/_authenticated/favorites')({
@@ -13,21 +15,43 @@ export const Route = createFileRoute('/_authenticated/favorites')({
 
 function FavoritesPage() {
   const navigate = useNavigate();
-  const [query, setQuery] = useState<RecipeQuery>({
-    page: 1,
-    limit: 12,
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    return (localStorage.getItem('favorites-view-mode') as ViewMode) || 'grid';
+  });
+  const [query, setQuery] = useState<Omit<RecipeQuery, 'page' | 'limit'>>({
     // TODO: Ajouter un filtre pour les favoris quand l'API le supportera
   });
 
-  const { data: recipesData, isLoading, error } = useRecipes(query);
+  const {
+    recipes,
+    totalRecipes,
+    hasNextPage,
+    isLoadingMore,
+    isLoading,
+    error,
+    fetchNextPage,
+    refetch,
+    isRefetching
+  } = useInfiniteRecipes(query);
 
-  const handleSearch = (search: string) => {
-    setQuery(prev => ({ ...prev, search: search || undefined, page: 1 }));
-  };
+  // Gestion de la persistance du mode d'affichage
+  useEffect(() => {
+    localStorage.setItem('favorites-view-mode', viewMode);
+  }, [viewMode]);
 
-  const handlePageChange = (page: number) => {
-    setQuery(prev => ({ ...prev, page }));
-  };
+  const handleSearch = useCallback((search: string) => {
+    setQuery(prev => ({ ...prev, search: search || undefined }));
+  }, []);
+
+  const handleLoadMore = useCallback(() => {
+    if (hasNextPage && !isLoadingMore) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isLoadingMore, fetchNextPage]);
+
+  const { loaderRef } = useInfiniteScroll(handleLoadMore, {
+    enabled: hasNextPage && !isLoadingMore
+  });
 
   const handleViewRecipe = (id: string) => {
     navigate({ to: '/recipes/$recipeId', params: { recipeId: id } });
@@ -38,7 +62,7 @@ function FavoritesPage() {
   };
 
   // TODO: Filtrer les recettes favorites côté client en attendant l'API
-  const favoriteRecipes = recipesData?.data || [];
+  const favoriteRecipes = recipes.filter(recipe => recipe.isFavorite);
 
   if (error) {
     return (
@@ -67,17 +91,32 @@ function FavoritesPage() {
                   <h1 className="text-3xl font-bold text-foreground">Mes Favoris</h1>
                   <p className="text-muted-foreground mt-1">
                     Vos recettes préférées en un seul endroit
+                    {favoriteRecipes.length > 0 && ` • ${favoriteRecipes.length} favori${favoriteRecipes.length > 1 ? 's' : ''}`}
                   </p>
                 </div>
               </div>
             </div>
-            <Button
-              onClick={handleCreateRecipe}
-              className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Générer une recette
-            </Button>
+            <div className="flex items-center gap-3">
+              <ViewModeToggle 
+                viewMode={viewMode} 
+                onViewModeChange={setViewMode}
+              />
+              <Button
+                onClick={() => refetch()}
+                variant="outline"
+                size="sm"
+                disabled={isRefetching}
+              >
+                <RefreshCw className={`w-4 h-4 ${isRefetching ? 'animate-spin' : ''}`} />
+              </Button>
+              <Button
+                onClick={handleCreateRecipe}
+                className="bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700 text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Générer une recette
+              </Button>
+            </div>
           </div>
         </div>
       </div>
@@ -135,69 +174,27 @@ function FavoritesPage() {
           </div>
         ) : (
           <>
-            {/* Statistiques */}
-            <div className="mb-6">
-              <p className="text-muted-foreground">
-                {favoriteRecipes.length} recette{favoriteRecipes.length > 1 ? 's' : ''} favorite{favoriteRecipes.length > 1 ? 's' : ''}
-              </p>
-            </div>
+            {/* Liste des recettes favorites avec layout adaptatif */}
+            <RecipeList
+              recipes={favoriteRecipes}
+              onViewDetails={handleViewRecipe}
+              viewMode={viewMode}
+            />
 
-            {/* Grille des recettes */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-              {favoriteRecipes.map((recipe) => (
-                <RecipeCard
-                  key={recipe.id}
-                  recipe={recipe}
-                  onViewDetails={handleViewRecipe}
-                />
-              ))}
-            </div>
+            {/* Infinite scroll loader */}
+            {hasNextPage && favoriteRecipes.length > 0 && (
+              <div ref={loaderRef} className="flex items-center justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-orange-500" />
+                <span className="ml-2 text-muted-foreground">Chargement...</span>
+              </div>
+            )}
 
-            {/* Pagination */}
-            {recipesData && recipesData.pagination.totalPages > 1 && (
-              <div className="flex items-center justify-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={query.page === 1}
-                  onClick={() => handlePageChange((query.page || 1) - 1)}
-                >
-                  Précédent
-                </Button>
-                
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: recipesData.pagination.totalPages }, (_, i) => i + 1)
-                    .filter(page => 
-                      page === 1 ||
-                      page === recipesData.pagination.totalPages ||
-                      Math.abs(page - (query.page || 1)) <= 2
-                    )
-                    .map((page, index, array) => (
-                      <>
-                        {index > 0 && array[index - 1] !== page - 1 && (
-                          <span key={`ellipsis-${page}`} className="px-2 text-muted-foreground">...</span>
-                        )}
-                        <Button
-                          key={page}
-                          variant={page === query.page ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => handlePageChange(page)}
-                          className={page === query.page ? "bg-orange-500 hover:bg-orange-600" : ""}
-                        >
-                          {page}
-                        </Button>
-                      </>
-                    ))}
-                </div>
-
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={query.page === recipesData.pagination.totalPages}
-                  onClick={() => handlePageChange((query.page || 1) + 1)}
-                >
-                  Suivant
-                </Button>
+            {/* Indicateur de fin */}
+            {!hasNextPage && favoriteRecipes.length > 0 && (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground text-sm">
+                  Vous avez vu tous vos favoris
+                </p>
               </div>
             )}
           </>
