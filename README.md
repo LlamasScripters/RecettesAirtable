@@ -2,6 +2,13 @@
 
 Application web complète de gestion de recettes avec génération automatique par IA, utilisant Airtable comme base de données et Ollama pour l'intelligence artificielle.
 
+## 👨‍💻 Membres du groupe
+
+Sami ASSIAKH - iSaaMz
+Moustapha CHEGDALI - mchegdali
+Moussa Seydou TRAORE - MoussaST
+Aria AMAN - AriaAman
+
 ## ✨ Fonctionnalités
 
 - **Génération de recettes par IA** : Créez des recettes personnalisées à partir d'ingrédients
@@ -189,11 +196,3 @@ Vérifier que Vite écoute sur `0.0.0.0:3000`
 
 **API erreur 500 :**
 Vérifier les variables d'environnement Airtable
-
-## 📄 Licence
-
-MIT License
-
-## 👥 Contributeurs
-
-- Développé dans le cadre du M2 Airtable Avancé
